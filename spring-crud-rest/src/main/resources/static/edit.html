@@ -1,0 +1,109 @@
+<!-- <!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Edit Employee</title>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var urlParams = new URLSearchParams(window.location.search);
+    var employeeId = urlParams.get('id');
+
+    // Retrieve employee data and populate the form fields
+    function getEmployeeData(employeeId) {
+        $.ajax({
+            url: 'http://localhost:8080/api/rest/emp/' + employeeId,
+            method: 'GET',
+            success: function(response) {
+                if (Array.isArray(response)) {
+                    var empData = response.data;
+                    $('#id').val(empData.id);
+                    $('#fname').val(empData.fname);
+                    $('#lname').val(empData.lname);
+                    $('#email').val(empData.email);
+                /* } else {
+                    alert('Failed to retrieve employee data');
+                    console.log(response);*/
+                } 
+            },
+            error: function(xhr, status, error) {
+            	console.log(response);
+                alert(error);
+            }
+        });
+    }
+
+    // Load employee data on page load if an employee ID is provided
+    if (employeeId) {
+        getEmployeeData(employeeId);
+    }
+
+    $('#updateEmp').submit(function(e) {
+        e.preventDefault();
+
+        var id = parseInt($('#id').val());
+        var updateEmp = {
+            id: id,
+            fname: $('#fname').val(),
+            lname: $('#lname').val(),
+            email: $('#email').val()
+        };
+
+        $.ajax({
+            url: 'http://localhost:8080/api/rest/update/' + id,
+            method: 'PUT',
+            data: JSON.stringify(updateEmp),
+            contentType: 'application/json',
+            success: function(response) {
+                if (response.status === 'success') {
+                    alert('Employee Data Updated Successfully');
+                    window.location.href = 'fetchall.html';
+                } else {
+                    alert('Failed to Update Employee Data');
+                }
+            },
+            error: function(xhr, status, error) {
+                alert(error);
+            }
+        });
+    });
+});
+</script>
+</head>
+<body>
+<form id="updateEmp">
+<fieldset style="width:350px;">
+<table>
+<tr>
+<td><label for="id">ID</label></td>
+<td><input type="text" id="id" name="id" value="*{id}" readonly></td>
+</tr>
+
+<tr>
+<td><label for="fname">First Name</label></td>
+<td><input type="text" id="fname" name="fname" value="*{fname}"required></td>
+</tr>
+
+<tr>
+<td><label for="lname">Last Name</label></td>
+<td><input type="text" id="lname" name="lname" value="*{lname}" required></td>
+</tr>
+
+<tr>
+<td><label for="email">Email</label></td>
+<td><input type="email" id="email" name="email" value="*{email}" required></td>
+</tr>
+
+<tr>
+<td><input type="submit" value="Update Employee"></td>
+</tr>
+</table>
+</fieldset>
+</form>
+</body>
+</html>
+
+ -->

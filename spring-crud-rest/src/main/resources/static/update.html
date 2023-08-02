@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="ISO-8859-1">
+<title>Update Data</title>
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function(){
+	var urlParams = new URLSearchParams(window.location.search);
+    var employeeId = urlParams.get('id');
+    
+	$('#updateForm').submit(function(e) {
+		e.preventDefault();
+		
+		 var id = parseInt(employeeId);
+		var updateData={
+				id:id,
+				fname:$('#fname').val(),
+				lname:$('#lname').val(),
+				email:$('#email').val()
+		};
+		$.ajax({
+			url:'http://localhost:8080/api/rest/update/'+id,
+			method:'PUT',
+			data: JSON.stringify(updateData),
+            contentType: 'application/json',
+            success: function(response) {
+            	if(response.status==="success")
+            	alert('Data updated successfully');
+            	window.location.href = 'fetchall.html';
+                // Handle the response or perform any additional tasks
+            },
+            error: function(xhr, status, error) {
+                console.log('Error occurred:', error);
+                alert('Error occurred:', error);
+            }
+		});
+	});
+	
+});
+</script>
+</head>
+<body>
+   <form id="updateForm">
+<fieldset style="width:350px;">
+<table>
+<tr>
+<td><label for="id">ID</label></td>
+<td><input type="text" id="id" name="id" readonly></td>
+</tr>
+
+<tr>
+<td><label for="fname">First Name</label></td>
+<td><input type="text" id="fname" name="fname" required></td>
+</tr>
+
+<tr>
+<td><label for="lname">Last Name</label></td>
+<td><input type="text" id="lname" name="lname"  required></td>
+</tr>
+
+<tr>
+<td><label for="email">Email</label></td>
+<td><input type="email" id="email" name="email"  required></td>
+</tr>
+
+<tr>
+<td><input type="submit" value="Update Employee"></td>
+</tr>
+</table>
+</fieldset>
+</form>
+</body>
+</html>

@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org/" 
+xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+
+<head>
+<meta charset="ISO-8859-1">
+<title>All Employees</title>
+<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/1.11.3/css/jquery.dataTables.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.4/jquery.min.js"></script>
+<script src="https://cdn.datatables.net/1.11.3/js/jquery.dataTables.min.js"></script>
+
+<script type="text/javascript">
+$(document).ready(function() {
+    var dataTable; // Declare the dataTable variable
+
+    function showAll(dataSet) {
+        // Check if dataTable is already initialized
+        if (dataTable) {
+            dataTable.clear().destroy();
+        }
+
+        dataTable = $("#tbl").DataTable({
+            data: dataSet,
+            columns: [
+                {title: "id", data: "id"},
+                {title: "fname", data: "fname"},
+                {title: "lname", data: "lname"},
+                {title: "email", data: "email"},
+                {
+                    title: "Action",
+                    data: null,
+                    render: function (data, type, row) {
+                        var buttons = '';
+
+                        buttons += '<div sec:authorize="hasAnyAuthority(\'ADMIN\',\'EDITOR\')">';
+                        buttons += '<button class="edit-btn" data-id="' + row.id + '" onClick="getEmployeeData(employeeId)">Edit</button>';
+                        buttons += '</div>';
+
+                        buttons += '<div sec:authorize="hasAnyAuthority(\'ADMIN\')">';
+                        buttons += '<button class="delete-btn" data-id="' + row.id + '">Delete</button>';
+                        buttons += '</div>';
+
+                        return buttons;
+                    }
+
+                }
+            ]
+        });
+    }
+
+    // Fetch All Employee
+    $.ajax({
+        url: 'http://localhost:8080/api/rest/getAllEmployees',
+        method: 'GET',
+        success: function (response) {
+            if ( Array.isArray(response) ) {
+                var dataSet = response;  
+                showAll(dataSet);
+            } else {
+                console.log("Invalid response format");
+            }
+        },
+        error: function (xhr, status, error) {
+            alert(error);
+        }
+    });
+
+    $(document).on('click', '.edit-btn', function () {
+        var employeeId = $(this).data('id');
+        window.location.href = 'update.html?id=' + employeeId;
+    });
+    
+    $(document).on('click', '.delete-btn', function () {
+        var employeeId = $(this).data('id');
+        window.location.href = 'delete.html?id=' + employeeId;
+    });
+});
+</script>
+</head>
+<body>
+ <div style="text-align: center;">
+<div sec:authorize="isAuthenticated()">
+    welcome <b><span sec:authentication="username"></span></b> &nbsp;
+    <i><span sec:authentication="principal.authorities"></span></i>
+</div>
+
+<form th:action="@{/logout}" method="post">
+    <input type="submit" value="Logout" />
+</form>
+
+<div sec:authorize="hasAnyAuthority('CREATOR','ADMIN')">
+    <a href="create.html">Create Employee</a>
+</div>
+ </div>
+ 
+<table id="tbl">
+    <thead>
+        <tr>
+            <th>id</th>
+            <th>fname</th>
+            <th>lname</th>
+            <th>email</th>
+            <th sec:authorize="hasAnyAuthority('ADMIN','EDITOR')">Action</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
+</body>
+</html>
